@@ -1,0 +1,95 @@
+{
+  "run_at": "2026-08-10T04:42:51.821235",
+  "passed": 22,
+  "total": 22,
+  "results": [
+    {
+      "name": "Admin login succeeds",
+      "passed": true
+    },
+    {
+      "name": "/dashboard loads",
+      "passed": true
+    },
+    {
+      "name": "/reports/ loads",
+      "passed": true
+    },
+    {
+      "name": "/reports/appointments loads",
+      "passed": true
+    },
+    {
+      "name": "/reports/consultations loads",
+      "passed": true
+    },
+    {
+      "name": "/reports/prescriptions loads",
+      "passed": true
+    },
+    {
+      "name": "/reports/doctor-performance loads",
+      "passed": true
+    },
+    {
+      "name": "/reports/department loads",
+      "passed": true
+    },
+    {
+      "name": "/reports/monthly loads",
+      "passed": true
+    },
+    {
+      "name": "/system-integration/ loads",
+      "passed": true
+    },
+    {
+      "name": "/api/patients loads",
+      "passed": true
+    },
+    {
+      "name": "/api/doctors loads",
+      "passed": true
+    },
+    {
+      "name": "/api/appointments loads",
+      "passed": true
+    },
+    {
+      "name": "/api/consultations loads",
+      "passed": true
+    },
+    {
+      "name": "/api/prescriptions loads",
+      "passed": true
+    },
+    {
+      "name": "/testing-qa/ loads",
+      "passed": true
+    },
+    {
+      "name": "/feedback/ loads",
+      "passed": true
+    },
+    {
+      "name": "/patients/ loads",
+      "passed": true
+    },
+    {
+      "name": "/doctors/ loads",
+      "passed": true
+    },
+    {
+      "name": "/consultations/ loads",
+      "passed": true
+    },
+    {
+      "name": "/prescriptions/ loads",
+      "passed": true
+    },
+    {
+      "name": "Unauthenticated access still blocked",
+      "passed": true
+    }
+  ]
+}
