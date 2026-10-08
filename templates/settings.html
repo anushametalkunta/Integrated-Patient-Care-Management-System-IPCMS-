@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Settings{% endblock %}
+{% block page_name %}Settings{% endblock %}
+{% block content %}
+<h1>Settings</h1>
+<div class="card">
+    <h3>Account</h3>
+    <p><strong>Name:</strong> {{ user.full_name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Role:</strong> {{ user.role }}</p>
+</div>
+<div class="card">
+    <h3>System</h3>
+    <p><strong>Database:</strong> {{ db_uri }}</p>
+    <p><strong>Application:</strong> Integrated Patient Care Management System (IPCMS)</p>
+    <p class="muted">Milestone 1 + Milestone 2 — EHR & Clinical Management</p>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Nurse Dashboard{% endblock %}
+{% block page_name %}Dashboard{% endblock %}
+{% block content %}
+<h1>Nurse Dashboard</h1>
+<div class="stats-grid">
+    <div class="stat-card"><div class="value">{{ stats.total_patients }}</div><div class="label">Total Patients</div></div>
+    <div class="stat-card"><div class="value">{{ stats.today_appointments }}</div><div class="label">Today's Appointments</div></div>
+    <div class="stat-card"><div class="value">{{ stats.total_consultations }}</div><div class="label">Consultations</div></div>
+</div>
+<h3>Recent Patients</h3>
+<div class="table-wrap">
+<table>
+    <tr><th>ID</th><th>Name</th><th>Gender</th><th>Blood Group</th><th>EHR</th></tr>
+    {% for p in patients %}
+    <tr>
+        <td>{{ p.display_id }}</td>
+        <td>{{ p.full_name }}</td>
+        <td>{{ p.gender }}</td>
+        <td>{{ p.blood_group }}</td>
+        <td><a class="btn btn-small btn-primary" href="{{ url_for('ehr.view_record', patient_id=p.id) }}">View</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No patients yet.</td></tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

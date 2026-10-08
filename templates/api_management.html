@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}REST API Management{% endblock %}
+{% block page_name %}REST API Management{% endblock %}
+{% block extra_head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>REST API Dashboard</h1>
+</div>
+
+<div class="stat-cards" style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:24px;">
+    <div class="card" style="flex:1; min-width:150px;">
+        <div class="muted">Total APIs</div>
+        <h2>{{ total_apis }}</h2>
+        <div class="muted">All Endpoints</div>
+    </div>
+    <div class="card" style="flex:1; min-width:150px;">
+        <div class="muted">Active APIs</div>
+        <h2 style="color:#16a34a;">{{ active_apis }}</h2>
+        <div class="muted">100% Active</div>
+    </div>
+    <div class="card" style="flex:1; min-width:150px;">
+        <div class="muted">Average Response Time</div>
+        <h2>{{ avg_time|int }} ms</h2>
+        <div class="muted">All APIs</div>
+    </div>
+    <div class="card" style="flex:1; min-width:150px;">
+        <div class="muted">Success Rate</div>
+        <h2 style="color:#f59e0b;">{{ success_rate }}%</h2>
+        <div class="muted">All Requests</div>
+    </div>
+    <div class="card" style="flex:1; min-width:150px;">
+        <div class="muted">95th Percentile</div>
+        <h2>{{ p95_time|int }} ms</h2>
+        <div class="muted">Target &lt; 300 ms</div>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+    <h3>API Endpoints</h3>
+    <div class="table-wrap">
+    <table>
+        <tr><th>#</th><th>API Name</th><th>Endpoint</th><th>Methods</th><th>Avg Response</th><th>95th Percentile</th><th>Calls</th></tr>
+        {% for ep in endpoints_table %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ ep.name }}</td>
+            <td>{{ ep.path }}</td>
+            <td>{{ ep.methods|join(', ') }}</td>
+            <td>{{ ep.avg_time|int }} ms</td>
+            <td>{{ ep.p95_time|int }} ms</td>
+            <td>{{ ep.calls }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+    <h3>API Performance Analytics (Response Time in ms)</h3>
+    <canvas id="perfChart" height="80"></canvas>
+</div>
+
+<div class="card" style="{% if evaluation.overall_pass %}border-left:4px solid #16a34a;{% else %}border-left:4px solid #dc2626;{% endif %}">
+    <h3>Milestone 3 Evaluation {% if evaluation.overall_pass %}Passed{% else %}Not Passed{% endif %}</h3>
+    <p>{% if evaluation.response_time_pass %}✅{% else %}❌{% endif %} REST API 95th percentile response time is within the target limit.</p>
+    <p>{% if evaluation.success_rate_pass %}✅{% else %}❌{% endif %} API request success rate is 95% or higher.</p>
+    <p>{% if evaluation.security_pass %}✅{% else %}❌{% endif %} Security testing confirms proper authentication and authorization enforcement.</p>
+    <div class="badge {% if evaluation.overall_pass %}badge-green{% else %}badge-red{% endif %}">
+        Status: {% if evaluation.overall_pass %}PASSED{% else %}FAILED{% endif %}
+    </div>
+</div>
+
+<script>
+const ctx = document.getElementById('perfChart');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ chart_labels|tojson }},
+        datasets: [
+            {
+                label: 'Average Response Time',
+                data: {{ chart_avg|tojson }},
+                borderColor: '#2563eb',
+                backgroundColor: 'transparent',
+                tension: 0.3
+            },
+            {
+                label: '95th Percentile',
+                data: {{ chart_p95|tojson }},
+                borderColor: '#16a34a',
+                backgroundColor: 'transparent',
+                tension: 0.3
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } }
+    }
+});
+</script>
+{% endblock %}

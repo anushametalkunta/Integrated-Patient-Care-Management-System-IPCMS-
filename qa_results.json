@@ -1,0 +1,87 @@
+{
+  "run_at": "2026-08-09T12:21:06.150910",
+  "passed": 20,
+  "total": 20,
+  "results": [
+    {
+      "name": "Login with correct credentials succeeds",
+      "passed": true
+    },
+    {
+      "name": "Login with wrong password is rejected",
+      "passed": true
+    },
+    {
+      "name": "Patient registration succeeds",
+      "passed": true
+    },
+    {
+      "name": "Patient registration rejects missing required fields",
+      "passed": true
+    },
+    {
+      "name": "Doctor list available for scheduling",
+      "passed": true
+    },
+    {
+      "name": "Appointment creation succeeds",
+      "passed": true
+    },
+    {
+      "name": "Appointment read-back succeeds",
+      "passed": true
+    },
+    {
+      "name": "Consultation creation succeeds",
+      "passed": true
+    },
+    {
+      "name": "Prescription creation succeeds",
+      "passed": true
+    },
+    {
+      "name": "Appointment report page loads",
+      "passed": true
+    },
+    {
+      "name": "Consultation report page loads",
+      "passed": true
+    },
+    {
+      "name": "Prescription report page loads",
+      "passed": true
+    },
+    {
+      "name": "Doctor performance report page loads",
+      "passed": true
+    },
+    {
+      "name": "Department-wise report page loads",
+      "passed": true
+    },
+    {
+      "name": "Monthly hospital report page loads",
+      "passed": true
+    },
+    {
+      "name": "Unauthenticated API access is blocked",
+      "passed": true
+    },
+    {
+      "name": "Unauthenticated dashboard access redirects to login",
+      "passed": true
+    },
+    {
+      "name": "Delete-doctor endpoint requires Admin role (404 for missing id proves route is reachable to Admin)",
+      "passed": true
+    },
+    {
+      "name": "SQL injection in login is rejected (not authenticated)",
+      "passed": true
+    },
+    {
+      "name": "SQL injection in search does not crash the server",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}IPCMS{% endblock %} | Integrated Patient Care</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="sidebar-brand" href="{{ url_for('dashboard.index') }}">
+            <span class="logo">❤️</span>
+            <div>
+                <div class="title">IPCMS</div>
+                <div class="subtitle">{{ current_user.role }} Portal</div>
+            </div>
+        </a>
+
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('dashboard.index') }}" class="{% if active_page == 'dashboard' %}active{% endif %}">
+                <span class="icon">📊</span><span class="label">Dashboard</span>
+            </a>
+            <a href="{{ url_for('notifications.index') }}" class="{% if active_page == 'notifications' %}active{% endif %}">
+                <span class="icon">🔔</span><span class="label">Notifications</span>
+            </a>
+
+            {% if current_user.role in ['Admin', 'Doctor', 'Nurse'] %}
+            <div class="sidebar-section">Clinical Records</div>
+            <a href="{{ url_for('ehr.list_records') }}" class="{% if active_page == 'ehr' %}active{% endif %}">
+                <span class="icon">📋</span><span class="label">EHR Records</span>
+            </a>
+            <a href="{{ url_for('consultation.list_consultations') }}" class="{% if active_page == 'consultations' %}active{% endif %}">
+                <span class="icon">🩺</span><span class="label">Consultations</span>
+            </a>
+            <a href="{{ url_for('prescription.list_prescriptions') }}" class="{% if active_page == 'prescriptions' %}active{% endif %}">
+                <span class="icon">💊</span><span class="label">Prescriptions</span>
+            </a>
+            <a href="{{ url_for('laboratory.list_tests') }}" class="{% if active_page == 'laboratory' %}active{% endif %}">
+                <span class="icon">🔬</span><span class="label">Lab Reports</span>
+            </a>
+            <a href="{{ url_for('medical_history.index') }}" class="{% if active_page == 'medical_history' %}active{% endif %}">
+                <span class="icon">🕐</span><span class="label">Medical History</span>
+            </a>
+            <a href="{{ url_for('reports.index') }}" class="{% if active_page == 'reports' %}active{% endif %}">
+                <span class="icon">🔍</span><span class="label">Reports & Search</span>
+            </a>
+            <a href="{{ url_for('feedback.index') }}" class="{% if active_page == 'feedback' %}active{% endif %}">
+                <span class="icon">⭐</span><span class="label">Patient Feedback</span>
+            </a>
+            <a href="{{ url_for('pharmacy.index') }}" class="{% if active_page == 'pharmacy' %}active{% endif %}">
+                <span class="icon">💊</span><span class="label">Pharmacy</span>
+            </a>
+            {% if current_user.role in ['Admin', 'Nurse'] %}
+            <a href="{{ url_for('billing.index') }}" class="{% if active_page == 'billing' %}active{% endif %}">
+                <span class="icon">💳</span><span class="label">Billing & Payment</span>
+            </a>
+            {% endif %}
+            {% endif %}
+
+            {% if current_user.role == 'Patient' %}
+            <div class="sidebar-section">My Care</div>
+            <a href="{{ url_for('ehr.my_record') }}" class="{% if active_page == 'ehr' %}active{% endif %}">
+                <span class="icon">📋</span><span class="label">My EHR Record</span>
+            </a>
+            <a href="{{ url_for('appointment.list_appointments') }}" class="{% if active_page == 'appointments' %}active{% endif %}">
+                <span class="icon">📅</span><span class="label">My Appointments</span>
+            </a>
+            <a href="{{ url_for('feedback.my_feedback') }}" class="{% if active_page == 'feedback' %}active{% endif %}">
+                <span class="icon">⭐</span><span class="label">My Feedback</span>
+            </a>
+            {% endif %}
+
+            {% if current_user.role in ['Admin', 'Nurse'] %}
+            <div class="sidebar-section">Administration</div>
+            <a href="{{ url_for('patient.list_patients') }}" class="{% if active_page == 'patients' %}active{% endif %}">
+                <span class="icon">👤</span><span class="label">Manage Patients</span>
+            </a>
+            {% endif %}
+
+            {% if current_user.role == 'Admin' %}
+            <a href="{{ url_for('api_management.index') }}" class="{% if active_page == 'api_management' %}active{% endif %}">
+                <span class="icon">🔌</span><span class="label">REST API Management</span>
+            </a>
+            <a href="{{ url_for('system_integration.index') }}" class="{% if active_page == 'system_integration' %}active{% endif %}">
+                <span class="icon">🧩</span><span class="label">System Integration</span>
+            </a>
+            <a href="{{ url_for('security_management.index') }}" class="{% if active_page == 'security_management' %}active{% endif %}">
+                <span class="icon">🛡️</span><span class="label">Security Management</span>
+            </a>
+            <a href="{{ url_for('doctor.list_doctors') }}" class="{% if active_page == 'doctors' %}active{% endif %}">
+                <span class="icon">👨‍⚕️</span><span class="label">Manage Doctors</span>
+            </a>
+             <a href="{{ url_for('appointment.list_appointments') }}" class="{% if active_page == 'appointments' %}active{% endif %}">
+                <span class="icon">📅</span><span class="label">Appointments</span>
+            </a>
+            </a>
+            <a href="{{ url_for('users.list_users') }}" class="{% if active_page == 'users' %}active{% endif %}">
+                <span class="icon">👥</span><span class="label">Users</span>
+            </a>
+            <a href="{{ url_for('settings.index') }}" class="{% if active_page == 'settings' %}active{% endif %}">
+                <span class="icon">⚙️</span><span class="label">Settings</span>
+            </a>
+            <a href="{{ url_for('deployment_status.index') }}" class="{% if active_page == 'deployment_status' %}active{% endif %}">
+                <span class="icon">🚀</span><span class="label">Deployment & Backup</span>
+            </a>
+            {% elif current_user.role == 'Doctor' %}
+            <a href="{{ url_for('appointment.list_appointments') }}" class="{% if active_page == 'appointments' %}active{% endif %}">
+                <span class="icon">📅</span><span class="label">My Schedule</span>
+            </a>
+            {% elif current_user.role == 'Nurse' %}
+            <a href="{{ url_for('doctor.list_doctors') }}" class="{% if active_page == 'doctors' %}active{% endif %}">
+                <span class="icon">👨‍⚕️</span><span class="label">Doctors</span>
+            </a>
+            <a href="{{ url_for('appointment.list_appointments') }}" class="{% if active_page == 'appointments' %}active{% endif %}">
+                <span class="icon">📅</span><span class="label">Appointments</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="sidebar-footer">
+            {% if current_user.is_authenticated %}
+            <div class="sidebar-user">
+                <div class="avatar">{{ current_user.full_name[0] }}</div>
+                <div class="info">
+                    <div>{{ current_user.full_name }}</div>
+                    <div class="muted" style="color:#94a3b8;font-size:0.78rem;">{{ current_user.role }}</div>
+                </div>
+            </div>
+            <a href="{{ url_for('auth.logout') }}"><span class="icon">🚪</span><span>Logout</span></a>
+            {% endif %}
+        </div>
+    </aside>    <div class="main-area">
+        <header class="topbar">
+            <div>
+                <div class="topbar-title">Integrated Patient Care Management System</div>
+                <div class="breadcrumb">{% block breadcrumb %}Home &gt; {% block page_name %}Dashboard{% endblock %}{% endblock %}</div>
+            </div>
+            <div class="topbar-user">
+                <span>{{ current_user.full_name }}</span>
+                <span class="role-badge">{{ current_user.role }}</span>
+            </div>
+        </header>
+
+        <main class="content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% block scripts %}{% endblock %}
+</body>
+</html>

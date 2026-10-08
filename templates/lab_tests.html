@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Laboratory Management{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div><h1>Laboratory Management</h1></div>
+    {% if current_user.role in ['Admin', 'Doctor', 'Nurse'] %}
+    <a class="btn" href="{{ url_for('lab.request_test') }}">+ Request Test</a>
+    {% endif %}
+</div>
+
+<table>
+    <tr><th>Date</th><th>Patient</th><th>Test</th><th>Category</th><th>Result</th><th>Status</th><th>Actions</th></tr>
+    {% for t in tests %}
+    <tr>
+        <td>{{ t.test_date.strftime('%d-%m-%Y') }}</td>
+        <td>{{ t.patient.full_name }}</td>
+        <td>{{ t.test_name }}</td>
+        <td>{{ t.category }}</td>
+        <td>
+            {% if t.result %}
+            <span class="result-{{ t.result|lower|replace(' ', '-') }}">{{ t.result }}</span>
+            {% else %}—{% endif %}
+        </td>
+        <td><span class="badge badge-{{ t.status|lower|replace(' ', '-') }}">{{ t.status }}</span></td>
+        <td>
+            {% if current_user.role in ['Admin', 'Doctor', 'Nurse'] %}
+            <a class="btn btn-small" href="{{ url_for('lab.update_result', test_id=t.id) }}">Update</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">No laboratory tests yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

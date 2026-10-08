@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Deployment & Backup{% endblock %}
+{% block page_name %}Deployment & Backup{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Deployment & Backup Status</h1>
+</div>
+
+<div class="card" style="margin-bottom:24px; {% if smoke_data and smoke_data.passed == smoke_data.total %}border-left:4px solid #16a34a;{% elif smoke_data %}border-left:4px solid #dc2626;{% else %}border-left:4px solid #f59e0b;{% endif %}">
+    <h3>
+        {% if not smoke_data %}⚠️ No smoke test run yet
+        {% elif smoke_data.passed == smoke_data.total %}✅ MILESTONE 4 READY
+        {% else %}⚠️ SOME CHECKS FAILED{% endif %}
+    </h3>
+    {% if smoke_data %}
+    <div style="display:flex; gap:24px; flex-wrap:wrap; margin-top:12px;">
+        <div><div class="muted">Checks Passed</div><h2>{{ smoke_data.passed }} / {{ smoke_data.total }}</h2></div>
+        <div><div class="muted">Last Run</div><h3>{{ smoke_data.run_at }}</h3></div>
+    </div>
+    {% else %}
+    <p class="muted">Run <code>python final_smoke_test.py</code> from the project root (with the app running) to generate results.</p>
+    {% endif %}
+</div>
+
+{% if smoke_data %}
+<div class="card" style="margin-bottom:24px;">
+    <h3>Final Smoke Test Results</h3>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Check</th><th>Result</th></tr>
+        {% for r in smoke_data.results %}
+        <tr>
+            <td>{{ r.name }}</td>
+            <td>
+                {% if r.passed %}<span class="badge badge-green">Passed</span>
+                {% else %}<span class="badge badge-red">Failed</span>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <h3>Database Backups</h3>
+    <p class="muted">
+        Run <code>python backup_db.py backup</code> from the project root to create a new backup.
+    </p>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Backup File</th><th>Size</th></tr>
+        {% for b in backups %}
+        <tr>
+            <td>{{ b.name }}</td>
+            <td>{{ b.size_kb }} KB</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="2">No backups yet.</td></tr>
+        {% endfor %}
+    </table>
+    </div>
+</div>
+{% endblock %}

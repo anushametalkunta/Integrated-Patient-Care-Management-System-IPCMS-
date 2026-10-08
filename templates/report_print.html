@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical Report — {{ patient.full_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        @media print { .no-print { display: none; } }
+        body { max-width: 900px; margin: 0 auto; padding: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="no-print page-actions" style="margin-bottom: 1rem;">
+        <button onclick="window.print()" class="btn">Print Report</button>
+        <a class="btn btn-secondary" href="{{ url_for('reports.search') }}">Back</a>
+    </div>
+
+    <h1>Integrated Patient Care — Medical Report</h1>
+    <p class="subtitle">Patient: {{ patient.full_name }} ({{ display_id }})</p>
+
+    <div class="card">
+        <h3>Patient Information</h3>
+        <p>Age: {{ patient.age }} | Gender: {{ patient.gender }} | Blood Group: {{ patient.blood_group }}</p>
+        <p>Contact: {{ patient.contact_number }} | Address: {{ patient.address }}</p>
+    </div>
+
+    {% if ehr %}
+    <div class="card">
+        <h3>Medical Summary</h3>
+        <p><strong>History:</strong> {{ ehr.medical_history or 'N/A' }}</p>
+        <p><strong>Allergies:</strong> {{ ehr.allergies or 'N/A' }}</p>
+        <p><strong>Diagnoses:</strong> {{ ehr.diagnoses or 'N/A' }}</p>
+        <p><strong>Medications:</strong> {{ ehr.medications or 'N/A' }}</p>
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <h3>Consultations ({{ consultations|length }})</h3>
+        {% for c in consultations %}
+        <p><strong>{{ c.consultation_date.strftime('%d-%m-%Y') }}</strong> — {{ c.diagnosis }} (Dr. {{ c.doctor.full_name }})</p>
+        {% else %}<p>None recorded.</p>{% endfor %}
+    </div>
+
+    <div class="card">
+        <h3>Prescriptions ({{ prescriptions|length }})</h3>
+        {% for p in prescriptions %}
+        <p>{{ p.medication_name }} {{ p.dosage }} — {{ p.frequency }} for {{ p.duration }}</p>
+        {% else %}<p>None recorded.</p>{% endfor %}
+    </div>
+
+    <div class="card">
+        <h3>Lab Reports ({{ lab_tests|length }})</h3>
+        {% for t in lab_tests %}
+        <p>{{ t.test_name }} ({{ t.test_date.strftime('%d-%m-%Y') }}): {{ t.result or 'Pending' }}</p>
+        {% else %}<p>None recorded.</p>{% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Create Bill{% endblock %}
+{% block page_name %}Billing & Payment{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Patient Billing — {{ patient.full_name }}</h1></div>
+
+<form method="POST" class="form-card">
+    <p><strong>Patient ID:</strong> {{ patient.display_id }} &nbsp; <strong>MRN:</strong> {{ patient.mrn or '—' }}</p>
+
+    <h3>Select Charges</h3>
+    <div class="table-wrap">
+    <table id="charges-table">
+        <tr><th></th><th>Type</th><th>Description</th><th>Amount (₹)</th></tr>
+
+        <tr>
+            <td><input type="checkbox" name="item_selected" value="0" onchange="recalc()"></td>
+            <td>
+                Consultation
+                <input type="hidden" name="item_type" value="Consultation">
+                <input type="hidden" name="item_name" value="General Consultation">
+            </td>
+            <td>General Consultation</td>
+            <td><input type="number" step="0.01" name="item_amount" value="{{ consultation_fee }}" class="amt" onchange="recalc()"></td>
+        </tr>
+
+        {% for lc in lab_charges %}
+        <tr>
+            <td><input type="checkbox" name="item_selected" value="{{ loop.index }}" onchange="recalc()"></td>
+            <td>
+                Laboratory
+                <input type="hidden" name="item_type" value="Laboratory">
+                <input type="hidden" name="item_name" value="{{ lc.name }}">
+            </td>
+            <td>{{ lc.name }}</td>
+            <td><input type="number" step="0.01" name="item_amount" value="{{ lc.amount }}" class="amt" onchange="recalc()"></td>
+        </tr>
+        {% endfor %}
+
+        {% for pc in pharmacy_charges %}
+        <tr>
+            <td><input type="checkbox" name="item_selected" value="{{ loop.index + lab_charges|length }}" onchange="recalc()"></td>
+            <td>
+                Pharmacy
+                <input type="hidden" name="item_type" value="Pharmacy">
+                <input type="hidden" name="item_name" value="{{ pc.name }}">
+            </td>
+            <td>{{ pc.name }}</td>
+            <td><input type="number" step="0.01" name="item_amount" value="{{ pc.amount }}" class="amt" onchange="recalc()"></td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+
+    <h3 style="margin-top:1rem;">Total Amount: ₹<span id="total-amount">0.00</span></h3>
+
+    <div class="form-group" style="margin-top:1rem;">
+        <label>Payment Method</label>
+        <select name="payment_method">
+            <option value="">-- Not paid yet (Pending) --</option>
+            <option value="Cash">Cash</option>
+            <option value="Card">Card</option>
+            <option value="UPI">UPI</option>
+            <option value="Insurance">Insurance</option>
+        </select>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Generate Invoice</button>
+        <a class="btn btn-outline" href="{{ url_for('billing.index') }}">Cancel</a>
+    </div>
+</form>
+
+<script>
+function recalc() {
+    let total = 0;
+    document.querySelectorAll('input[name="item_selected"]:checked').forEach(function(cb) {
+        const row = cb.closest('tr');
+        const amt = parseFloat(row.querySelector('.amt').value) || 0;
+        total += amt;
+    });
+    document.getElementById('total-amount').innerText = total.toFixed(2);
+}
+</script>
+{% endblock %}

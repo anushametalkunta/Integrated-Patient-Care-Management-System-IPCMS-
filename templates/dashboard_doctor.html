@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Doctor Dashboard{% endblock %}
+{% block page_name %}Dashboard{% endblock %}
+{% block content %}
+<h1>Doctor Dashboard</h1>
+<p class="subtitle">View appointments and patient consultations</p>
+{% if not doctor %}
+<div class="card"><p>Your doctor profile is not set up yet. Contact the administrator.</p></div>
+{% else %}
+<div class="stats-grid">
+    <div class="stat-card"><div class="value">{{ appointments|length }}</div><div class="label">My Appointments</div></div>
+    <div class="stat-card"><div class="value">{{ stats.total_consultations }}</div><div class="label">Consultations</div></div>
+    <div class="stat-card"><div class="value">{{ stats.total_prescriptions }}</div><div class="label">Prescriptions</div></div>
+</div>
+<div class="charts-grid">
+    <div class="card chart-card"><h3>Monthly Consultations</h3><canvas id="consultChart"></canvas></div>
+    <div class="card chart-card"><h3>Prescription Statistics</h3><canvas id="rxChart"></canvas></div>
+</div>
+<h3>Your Appointments</h3>
+<div class="table-wrap">
+<table>
+    <tr><th>Patient</th><th>Date</th><th>Time</th><th>Status</th><th>EHR</th></tr>
+    {% for a in appointments %}
+    <tr>
+        <td>{{ a.patient.full_name }}</td>
+        <td>{{ a.appointment_date }}</td>
+        <td>{{ a.appointment_time }}</td>
+        <td><span class="badge badge-{{ a.status|lower }}">{{ a.status }}</span></td>
+        <td><a class="btn btn-small btn-primary" href="{{ url_for('ehr.view_record', patient_id=a.patient_id) }}">EHR</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No appointments scheduled.</td></tr>
+    {% endfor %}
+</table>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{% if doctor %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const charts = {{ charts | tojson }};
+new Chart(document.getElementById('consultChart'), { type:'bar', data:{ labels:charts.consult_labels, datasets:[{ data:charts.consult_data, backgroundColor:'#2563eb', borderRadius:6 }] }, options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} } });
+new Chart(document.getElementById('rxChart'), { type:'bar', data:{ labels:charts.rx_labels, datasets:[{ data:charts.rx_data, backgroundColor:'#7c3aed', borderRadius:6 }] }, options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} } });
+</script>
+{% endif %}
+{% endblock %}

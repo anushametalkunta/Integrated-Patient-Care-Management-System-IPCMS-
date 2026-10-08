@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Pharmacy{% endblock %}
+{% block page_name %}Pharmacy{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Pharmacy Management</h1>
+    <a class="btn btn-primary" href="{{ url_for('pharmacy.add_medicine') }}">+ Add Medicine</a>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card"><div class="value">{{ stats.total }}</div><div class="label">Total Medicines</div></div>
+    <div class="stat-card"><div class="value">{{ stats.available }}</div><div class="label">Available</div></div>
+    <div class="stat-card"><div class="value">{{ stats.low_stock }}</div><div class="label">Low Stock</div></div>
+    <div class="stat-card"><div class="value">{{ stats.expired }}</div><div class="label">Expired</div></div>
+    <div class="stat-card"><div class="value">{{ stats.dispensed_today }}</div><div class="label">Dispensed Today</div></div>
+</div>
+
+<form class="search-bar" method="GET">
+    <input type="text" name="q" placeholder="Search medicine by name or category..." value="{{ search }}">
+    <button class="btn btn-primary" type="submit">Search</button>
+</form>
+
+<h2 style="margin-top:2rem;">Medicine Inventory</h2>
+<div class="table-wrap">
+<table>
+    <tr><th>Name</th><th>Category</th><th>Manufacturer</th><th>Stock</th><th>Price</th><th>Expiry</th><th>Status</th><th>Update Stock</th></tr>
+    {% for m in medicines %}
+    <tr>
+        <td>{{ m.name }}</td>
+        <td>{{ m.category or '—' }}</td>
+        <td>{{ m.manufacturer or '—' }}</td>
+        <td>{{ m.stock }}</td>
+        <td>₹{{ '%.2f'|format(m.unit_price) }}</td>
+        <td>{{ m.expiry_date.strftime('%d-%m-%Y') if m.expiry_date else '—' }}</td>
+        <td><span class="badge badge-{{ 'danger' if m.status == 'Expired' else ('warning' if m.status == 'Low Stock' else 'success') }}">{{ m.status }}</span></td>
+        <td>
+            <form method="POST" action="{{ url_for('pharmacy.update_stock', medicine_id=m.id) }}" style="display:flex;gap:0.5rem;">
+                <input type="number" name="stock" value="{{ m.stock }}" min="0" style="width:80px;">
+                <button class="btn btn-small btn-outline" type="submit">Update</button>
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8">No medicines found.</td></tr>
+    {% endfor %}
+</table>
+</div>
+
+<h2 style="margin-top:2rem;">Dispense Medicine (from Prescriptions)</h2>
+<div class="table-wrap">
+<table>
+    <tr><th>Patient</th><th>Medication</th><th>Dosage</th><th>Prescribed Date</th><th>Dispense</th></tr>
+    {% for p in prescriptions %}
+    <tr>
+        <td>{{ p.patient.full_name }}</td>
+        <td>{{ p.medication_name }}</td>
+        <td>{{ p.dosage or '—' }}</td>
+        <td>{{ p.prescribed_date.strftime('%d-%m-%Y') }}</td>
+        <td>
+            <form method="POST" action="{{ url_for('pharmacy.dispense', prescription_id=p.id) }}" style="display:flex;gap:0.5rem;">
+                <select name="medicine_id" required>
+                    <option value="">Select medicine</option>
+                    {% for m in medicines %}
+                    <option value="{{ m.id }}">{{ m.name }} (Stock: {{ m.stock }})</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantity" placeholder="Qty" min="1" style="width:70px;" required>
+                <button class="btn btn-small btn-primary" type="submit">Dispense</button>
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No prescriptions found.</td></tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

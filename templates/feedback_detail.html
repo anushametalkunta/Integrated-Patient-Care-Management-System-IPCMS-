@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Feedback Detail{% endblock %}
+{% block page_name %}Feedback Detail{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Feedback #{{ fb.id }}</h1>
+</div>
+
+<div class="card" style="max-width:600px;">
+    <p><strong>Patient:</strong> {{ fb.patient.full_name }}</p>
+    <p><strong>Doctor:</strong> {{ fb.doctor.full_name }} ({{ fb.doctor.department }})</p>
+    <p><strong>Date:</strong> {{ fb.created_at.strftime('%d-%m-%Y %H:%M') }}</p>
+    <hr>
+    <p><strong>Doctor Rating:</strong> {{ fb.doctor_rating }} / 5</p>
+    <p><strong>Hospital Rating:</strong> {{ fb.hospital_rating }} / 5</p>
+    <p><strong>Lab Rating:</strong> {{ fb.lab_rating }} / 5</p>
+    <p><strong>Pharmacy Rating:</strong> {{ fb.pharmacy_rating }} / 5</p>
+    <p><strong>Overall Rating:</strong> {{ fb.overall_rating }} / 5</p>
+    <hr>
+    <p><strong>Comments:</strong></p>
+    <p class="muted">{{ fb.comments or 'No comments provided.' }}</p>
+
+    <a class="btn btn-outline" href="{{ url_for('feedback.index') }}">Back to Feedback List</a>
+</div>
+{% endblock %}

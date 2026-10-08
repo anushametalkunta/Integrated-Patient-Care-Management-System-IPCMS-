@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_name %}Edit EHR{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>{{ title }}</h1>
+    <p class="subtitle">{{ patient.full_name }} — {{ patient.display_id }}</p>
+</div>
+<div class="card">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">{{ form.medical_summary.label }}{{ form.medical_summary(class_='textarea') }}</div>
+        <div class="form-group">{{ form.medical_history.label }}{{ form.medical_history() }}</div>
+        <div class="form-group">{{ form.chronic_diseases.label }}{{ form.chronic_diseases() }}</div>
+        <div class="form-row">
+            <div class="form-group">{{ form.height_cm.label }}{{ form.height_cm() }}</div>
+            <div class="form-group">{{ form.weight_kg.label }}{{ form.weight_kg() }}</div>
+        </div>
+        <div class="form-group">{{ form.allergies.label }}{{ form.allergies() }}</div>
+        <div class="form-group">{{ form.diagnoses.label }}{{ form.diagnoses() }}</div>
+        <div class="form-group">{{ form.medications.label }}{{ form.medications() }}</div>
+        <div class="form-group">{{ form.treatment_notes.label }}{{ form.treatment_notes() }}</div>
+        <button class="btn" type="submit">{{ 'Save EHR' if is_new else 'Update EHR' }}</button>
+        <a class="btn btn-outline btn-small" href="{{ url_for('ehr.view_record', patient_id=patient.id) }}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

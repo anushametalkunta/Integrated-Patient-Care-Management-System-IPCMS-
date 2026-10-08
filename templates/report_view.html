@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_name %}{{ title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{{ title }}</h1>
+        <p class="subtitle">{{ rows|length }} record(s)</p>
+    </div>
+    <div>
+        <a class="btn btn-outline" href="{{ url_for('reports.export_' + report_key.replace('-', '_'), fmt='csv', **request.args) }}">Export CSV</a>
+        <a class="btn btn-outline" href="{{ url_for('reports.export_' + report_key.replace('-', '_'), fmt='pdf', **request.args) }}">Export PDF</a>
+        <button class="btn btn-primary" onclick="window.print()">Print</button>
+    </div>
+</div>
+
+{% if doctors is not none or statuses is not none %}
+<form method="get" class="card" style="padding:16px; margin-bottom:16px; display:flex; gap:12px; flex-wrap:wrap; align-items:end;">
+    <div>
+        <label>Start date</label><br>
+        <input type="date" name="start_date" value="{{ request.args.get('start_date', '') }}">
+    </div>
+    <div>
+        <label>End date</label><br>
+        <input type="date" name="end_date" value="{{ request.args.get('end_date', '') }}">
+    </div>
+    {% if doctors is not none %}
+    <div>
+        <label>Doctor</label><br>
+        <select name="doctor_id">
+            <option value="">All Doctors</option>
+            {% for d in doctors %}
+            <option value="{{ d.id }}" {% if request.args.get('doctor_id', type=int) == d.id %}selected{% endif %}>{{ d.full_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% endif %}
+    {% if statuses is not none %}
+    <div>
+        <label>Status</label><br>
+        <select name="status">
+            <option value="">All</option>
+            {% for s in statuses %}
+            <option value="{{ s }}" {% if request.args.get('status') == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% endif %}
+    <div>
+        <button class="btn btn-primary" type="submit">Filter</button>
+    </div>
+</form>
+{% endif %}
+
+<div class="table-wrap">
+<table>
+    <tr>
+        {% for h in headers %}<th>{{ h }}</th>{% endfor %}
+    </tr>
+    {% for row in rows %}
+    <tr>
+        {% for cell in row %}<td>{{ cell }}</td>{% endfor %}
+    </tr>
+    {% else %}
+    <tr><td colspan="{{ headers|length }}">No records found.</td></tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

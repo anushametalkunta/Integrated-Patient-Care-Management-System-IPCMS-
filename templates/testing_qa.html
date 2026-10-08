@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Testing & QA{% endblock %}
+{% block page_name %}Testing & QA{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Testing & QA Results</h1>
+</div>
+
+{% if not data %}
+<div class="card">
+    <h3>No test results yet</h3>
+    <p class="muted">
+        Run <code>python test_day4.py</code> from the project root (with the app
+        running) to generate a results file. This page will show the latest run
+        automatically once one exists.
+    </p>
+</div>
+{% else %}
+<div class="card" style="margin-bottom:24px; {% if data.passed == data.total %}border-left:4px solid #16a34a;{% else %}border-left:4px solid #dc2626;{% endif %}">
+    <h3>
+        {% if data.passed == data.total %}✅ ALL CHECKS PASSED{% else %}⚠️ SOME CHECKS FAILED{% endif %}
+    </h3>
+    <div style="display:flex; gap:24px; flex-wrap:wrap; margin-top:12px;">
+        <div><div class="muted">Checks Passed</div><h2>{{ data.passed }} / {{ data.total }}</h2></div>
+        <div><div class="muted">Last Run</div><h3>{{ data.run_at }}</h3></div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Functional & Security Test Results</h3>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Check</th><th>Result</th></tr>
+        {% for r in data.results %}
+        <tr>
+            <td>{{ r.name }}</td>
+            <td>
+                {% if r.passed %}<span class="badge badge-green">Passed</span>
+                {% else %}<span class="badge badge-red">Failed</span>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

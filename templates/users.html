@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Users{% endblock %}
+{% block page_name %}Users{% endblock %}
+{% block content %}
+<h1>System Users</h1>
+<div class="table-wrap">
+<table>
+    <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Registered</th></tr>
+    {% for u in users %}
+    <tr>
+        <td>{{ u.full_name }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.phone_number }}</td>
+        <td><span class="badge badge-blue">{{ u.role }}</span></td>
+        <td>{{ u.created_at.strftime('%d %b %Y') }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_name %}Prescriptions{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+<div class="card">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-row">
+            <div class="form-group">{{ form.patient_id.label }}{{ form.patient_id() }}</div>
+            <div class="form-group">{{ form.doctor_id.label }}{{ form.doctor_id() }}</div>
+        </div>
+        <div class="form-group">{{ form.medication_name.label }}{{ form.medication_name() }}</div>
+        <div class="form-row">
+            <div class="form-group">{{ form.dosage.label }}{{ form.dosage() }}</div>
+            <div class="form-group">{{ form.frequency.label }}{{ form.frequency() }}</div>
+            <div class="form-group">{{ form.prescribed_date.label }}{{ form.prescribed_date() }}</div>
+        </div>
+        <div class="form-group">{{ form.notes.label }}{{ form.notes() }}</div>
+        <button class="btn" type="submit">Save Prescription</button>
+    </form>
+</div>
+{% endblock %}

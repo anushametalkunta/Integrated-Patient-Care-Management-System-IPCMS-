@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Doctors{% endblock %}
+{% block content %}
+<h1>Doctors</h1>
+{% if current_user.role == 'Admin' %}
+<a class="btn" href="{{ url_for('doctor.add_doctor') }}">➕ Add Doctor</a>
+{% endif %}
+
+<table style="margin-top:1rem;">
+    <tr><th>Name</th><th>Specialization</th><th>Department</th><th>Contact</th><th>Available Time</th>{% if current_user.role == 'Admin' %}<th>Actions</th>{% endif %}</tr>
+    {% for d in doctors %}
+    <tr>
+        <td>Dr. {{ d.full_name }}</td>
+        <td>{{ d.specialization }}</td>
+        <td>{{ d.department }}</td>
+        <td>{{ d.contact_number }}</td>
+        <td>{{ d.available_time }}</td>
+        {% if current_user.role == 'Admin' %}
+        <td>
+            <a class="btn btn-small" href="{{ url_for('doctor.edit_doctor', doctor_id=d.id) }}">Edit</a>
+            <form method="POST" action="{{ url_for('doctor.delete_doctor', doctor_id=d.id) }}" style="display:inline;" onsubmit="return confirm('Delete this doctor record?');">
+                <button class="btn btn-danger btn-small" type="submit">Delete</button>
+            </form>
+        </td>
+        {% endif %}
+    </tr>
+    {% else %}
+    <tr><td colspan="6">No doctors added yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

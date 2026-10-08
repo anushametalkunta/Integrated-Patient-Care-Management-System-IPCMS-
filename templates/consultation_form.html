@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_name %}Consultations{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+<div class="card">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-row">
+            <div class="form-group">{{ form.patient_id.label }}{{ form.patient_id() }}</div>
+            <div class="form-group">{{ form.doctor_id.label }}{{ form.doctor_id() }}</div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">{{ form.consultation_date.label }}{{ form.consultation_date() }}</div>
+            <div class="form-group">{{ form.follow_up_date.label }}{{ form.follow_up_date() }}</div>
+        </div>
+        <div class="form-group">{{ form.diagnosis.label }}{{ form.diagnosis() }}</div>
+        <div class="form-group">{{ form.notes.label }}{{ form.notes() }}</div>
+        <button class="btn" type="submit">Save Consultation</button>
+        <a class="btn btn-outline btn-small" href="{{ url_for('consultation.list_consultations') }}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

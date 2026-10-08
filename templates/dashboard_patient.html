@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}My Dashboard{% endblock %}
+{% block page_name %}Dashboard{% endblock %}
+{% block content %}
+<h1>Patient Dashboard</h1>
+{% if not patient %}
+<div class="card">
+    <p>Complete your patient profile to get started.</p>
+    <a class="btn" href="{{ url_for('patient.add_patient') }}">Complete Profile</a>
+</div>
+{% else %}
+<div class="card">
+    <h3>My Profile</h3>
+    <p><strong>Name:</strong> {{ patient.full_name }} &nbsp; <strong>ID:</strong> {{ patient.display_id }}</p>
+    <p><strong>Blood Group:</strong> {{ patient.blood_group }} &nbsp; <strong>Contact:</strong> {{ patient.contact_number }}</p>
+    <a class="btn btn-small btn-primary" href="{{ url_for('ehr.my_record') }}">View My EHR</a>
+    <a class="btn btn-small btn-outline" href="{{ url_for('patient.edit_patient', patient_id=patient.id) }}">Edit Profile</a>
+</div>
+<h3>My Appointments</h3>
+<div class="table-wrap">
+<table>
+    <tr><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th></tr>
+    {% for a in appointments %}
+    <tr>
+        <td>Dr. {{ a.doctor.full_name }}</td>
+        <td>{{ a.appointment_date }}</td>
+        <td>{{ a.appointment_time }}</td>
+        <td><span class="badge badge-{{ a.status|lower }}">{{ a.status }}</span></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4">No appointments yet.</td></tr>
+    {% endfor %}
+</table>
+</div>
+<a class="btn" href="{{ url_for('appointment.book_appointment') }}">Book Appointment</a>
+{% endif %}
+{% endblock %}

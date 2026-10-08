@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Patient Feedback{% endblock %}
+{% block page_name %}Patient Feedback{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{% if is_admin_view %}Patient Feedback & Satisfaction{% else %}My Feedback History{% endif %}</h1>
+    </div>
+    {% if is_admin_view %}
+    <a class="btn btn-outline" href="{{ url_for('feedback.export_csv', **request.args) }}">Export CSV</a>
+    {% endif %}
+</div>
+
+{% if is_admin_view %}
+<div class="stats-grid">
+    <div class="stat-card"><div class="value">{{ total_feedback }}</div><div class="label">Total Feedback</div></div>
+    <div class="stat-card"><div class="value">{{ avg_overall }}</div><div class="label">Avg Overall Rating</div></div>
+    <div class="stat-card"><div class="value">{{ avg_doctor }}</div><div class="label">Avg Doctor Rating</div></div>
+    <div class="stat-card"><div class="value">{{ avg_hospital }}</div><div class="label">Avg Hospital Rating</div></div>
+    <div class="stat-card"><div class="value">{{ avg_lab }}</div><div class="label">Avg Lab Rating</div></div>
+    <div class="stat-card"><div class="value">{{ avg_pharmacy }}</div><div class="label">Avg Pharmacy Rating</div></div>
+</div>
+
+<form method="get" class="card" style="padding:16px; margin-bottom:16px; display:flex; gap:12px; flex-wrap:wrap; align-items:end;">
+    <div>
+        <label>Doctor</label><br>
+        <select name="doctor_id">
+            <option value="">All Doctors</option>
+            {% for d in doctors %}
+            <option value="{{ d.id }}" {% if request.args.get('doctor_id', type=int) == d.id %}selected{% endif %}>{{ d.full_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label>Department</label><br>
+        <select name="department">
+            <option value="">All Departments</option>
+            {% for dept in departments %}
+            <option value="{{ dept }}" {% if request.args.get('department') == dept %}selected{% endif %}>{{ dept }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label>Rating</label><br>
+        <select name="rating">
+            <option value="">All Ratings</option>
+            {% for i in range(1, 6) %}
+            <option value="{{ i }}" {% if request.args.get('rating', type=int) == i %}selected{% endif %}>{{ i }} star{{ 's' if i != 1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label>Start date</label><br>
+        <input type="date" name="start_date" value="{{ request.args.get('start_date', '') }}">
+    </div>
+    <div>
+        <label>End date</label><br>
+        <input type="date" name="end_date" value="{{ request.args.get('end_date', '') }}">
+    </div>
+    <div>
+        <button class="btn btn-primary" type="submit">Filter</button>
+    </div>
+</form>
+{% endif %}
+
+<div class="table-wrap">
+<table>
+    <tr>
+        <th>Date</th>
+        {% if is_admin_view %}<th>Patient</th>{% endif %}
+        <th>Doctor</th>
+        <th>Overall</th>
+        <th>Comments</th>
+        {% if is_admin_view %}<th>Details</th>{% endif %}
+    </tr>
+    {% for fb in feedback_entries %}
+    <tr>
+        <td>{{ fb.created_at.strftime('%d-%m-%Y') }}</td>
+        {% if is_admin_view %}<td>{{ fb.patient.full_name }}</td>{% endif %}
+        <td>{{ fb.doctor.full_name }}</td>
+        <td>{{ fb.overall_rating }} / 5</td>
+        <td>{{ (fb.comments or '-')[:60] }}</td>
+        {% if is_admin_view %}<td><a class="btn btn-small btn-outline" href="{{ url_for('feedback.view_feedback', feedback_id=fb.id) }}">View</a></td>{% endif %}
+    </tr>
+    {% else %}
+    <tr><td colspan="6">No feedback found.</td></tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

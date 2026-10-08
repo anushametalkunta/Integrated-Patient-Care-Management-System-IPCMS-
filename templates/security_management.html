@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Security Management{% endblock %}
+{% block page_name %}Security & Access Control{% endblock %}
+{% block extra_head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Security & Access Control</h1>
+</div>
+
+<div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:24px;">
+    <div class="card" style="flex:1; min-width:200px;">
+        <div class="muted">Security Status</div>
+        <h2 style="color:{% if security_secure %}#16a34a{% else %}#dc2626{% endif %};">
+            {% if security_secure %}SECURE{% else %}REVIEW NEEDED{% endif %}
+        </h2>
+    </div>
+    <div class="card" style="flex:1; min-width:200px;">
+        <div class="muted">Failed Logins (7 days)</div>
+        <h2>{{ failed_logins }}</h2>
+    </div>
+    <div class="card" style="flex:1; min-width:200px;">
+        <div class="muted">Unauthorized Access Attempts (7 days)</div>
+        <h2 style="color:{% if unauthorized_attempts > 0 %}#dc2626{% else %}#16a34a{% endif %};">
+            {{ unauthorized_attempts }}
+        </h2>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+    <h3>Role & Permissions</h3>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Role</th><th>Users</th><th>Permissions</th></tr>
+        {% for r in roles_table %}
+        <tr>
+            <td>{{ r.role }}</td>
+            <td>{{ r.users }}</td>
+            <td>{{ r.permissions }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+    <h3>Unauthorized Access Attempts (Last 7 Days)</h3>
+    <canvas id="unauthChart" height="70"></canvas>
+</div>
+
+<div class="card">
+    <h3>Recent Unauthorized Access Attempts</h3>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Time</th><th>Details</th></tr>
+        {% for a in recent_unauthorized %}
+        <tr>
+            <td>{{ a.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
+            <td>{{ a.details }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="2">No unauthorized access attempts in the last 7 days.</td></tr>
+        {% endfor %}
+    </table>
+    </div>
+</div>
+
+<script>
+new Chart(document.getElementById('unauthChart'), {
+    type: 'line',
+    data: {
+        labels: {{ chart_labels|tojson }},
+        datasets: [{
+            label: 'Unauthorized Attempts',
+            data: {{ chart_data|tojson }},
+            borderColor: '#dc2626',
+            backgroundColor: 'rgba(220,38,38,0.1)',
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+</script>
+{% endblock %}

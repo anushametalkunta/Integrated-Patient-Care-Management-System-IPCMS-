@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Patients{% endblock %}
+{% block page_name %}Patients{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Manage Patients</h1>
+    <a class="btn" href="{{ url_for('patient.add_patient') }}">+ Register Patient</a>
+</div>
+<div class="table-wrap">
+<table>
+    <tr><th>Patient ID</th><th>Name</th><th>Age</th><th>Gender</th><th>Contact</th><th>Blood Group</th><th>Actions</th></tr>
+    {% for p in patients %}
+    <tr>
+        <td>{{ p.display_id }}</td>
+        <td>{{ p.full_name }}</td>
+        <td>{{ p.age }}</td>
+        <td>{{ p.gender }}</td>
+        <td>{{ p.contact_number }}</td>
+        <td><span class="badge badge-red">{{ p.blood_group }}</span></td>
+        <td>
+            <a class="btn btn-small btn-primary" href="{{ url_for('ehr.view_record', patient_id=p.id) }}">EHR</a>
+            <a class="btn btn-small btn-outline" href="{{ url_for('patient.edit_patient', patient_id=p.id) }}">Edit</a>
+            <a class="btn btn-small btn-outline" href="{{ url_for('reports.export_excel', patient_id=p.id) }}">Excel</a>
+            {% if current_user.role in ['Admin', 'Nurse'] %}
+            <form method="POST" action="{{ url_for('patient.delete_patient', patient_id=p.id) }}" style="display:inline;" onsubmit="return confirm('Delete?');">
+                <button class="btn btn-danger btn-small" type="submit">Delete</button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">No patients registered yet.</td></tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

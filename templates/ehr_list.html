@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}EHR Records{% endblock %}
+{% block page_name %}EHR Records{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>EHR Records <span class="badge badge-count">{{ total }} TOTAL</span></h1>
+    </div>
+    {% if can_edit and selected %}
+    <a class="btn" href="{{ url_for('ehr.edit_record', patient_id=selected.id) }}">+ Add / Edit EHR Record</a>
+    {% endif %}
+</div>
+
+<form class="search-bar" method="GET">
+    <input type="text" name="q" placeholder="Search by Patient Name or ID..." value="{{ request.args.get('q','') }}">
+    <button class="btn btn-primary" type="submit">Search</button>
+</form>
+
+<div class="table-wrap">
+<table>
+    <tr>
+        <th>Patient ID</th><th>Patient Name</th><th>Gender</th><th>Blood Group</th>
+        <th>Date of Birth</th><th>Created</th><th>Actions</th>
+    </tr>
+    {% for p in patients %}
+    <tr>
+        <td>{{ p.display_id }}</td>
+        <td>{{ p.full_name }}</td>
+        <td>{{ p.gender }}</td>
+        <td><span class="badge badge-red">{{ p.blood_group }}</span></td>
+        <td>{{ p.date_of_birth.strftime('%d %b %Y') if p.date_of_birth else '—' }}</td>
+        <td>{{ p.created_at.strftime('%d %b %Y') }}</td>
+        <td>
+            <a class="btn btn-small btn-primary" href="{{ url_for('ehr.view_record', patient_id=p.id) }}">View</a>
+            {% if can_edit %}
+            <a class="btn btn-small btn-warning" href="{{ url_for('ehr.edit_record', patient_id=p.id) }}">Edit</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7"><div class="empty-state"><div class="icon">📋</div>No patients found.</div></td></tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

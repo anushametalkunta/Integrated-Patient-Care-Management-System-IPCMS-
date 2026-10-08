@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Consultation Summary{% endblock %}
+{% block content %}
+<div class="flash flash-success">Consultation Details Saved Successfully!</div>
+
+<div class="page-header">
+    <div>
+        <h1>Consultation Summary</h1>
+    </div>
+</div>
+
+<div class="card">
+    <div class="summary-grid">
+        <div>
+            <p><strong>Patient Name:</strong> {{ consultation.patient.full_name }}</p>
+            <p><strong>Doctor Name:</strong> Dr. {{ consultation.doctor.full_name }}</p>
+            <p><strong>Date of Consultation:</strong> {{ consultation.consultation_date.strftime('%d-%m-%Y') }}</p>
+        </div>
+        <div>
+            <p><strong>Symptoms:</strong> {{ consultation.symptoms }}</p>
+            <p><strong>Diagnosis:</strong> {{ consultation.diagnosis }}</p>
+            <p><strong>Treatment / Prescription:</strong> {{ consultation.treatment }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="page-actions">
+    <a class="btn" href="{{ url_for('consultation.add_consultation') }}">+ Add Another Consultation</a>
+    <a class="btn btn-outline" href="{{ url_for('consultation.list_consultations') }}">View All Consultations</a>
+</div>
+{% endblock %}

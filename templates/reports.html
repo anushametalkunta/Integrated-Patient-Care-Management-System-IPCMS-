@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Reports & Search{% endblock %}
+{% block page_name %}Reports{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Reports & Search</h1></div>
+<div class="stats-grid">
+    <div class="stat-card"><div class="value">{{ stats.patients }}</div><div class="label">Patients</div></div>
+    <div class="stat-card"><div class="value">{{ stats.consultations }}</div><div class="label">Consultations</div></div>
+    <div class="stat-card"><div class="value">{{ stats.prescriptions }}</div><div class="label">Prescriptions</div></div>
+    <div class="stat-card"><div class="value">{{ stats.lab_tests }}</div><div class="label">Lab Tests</div></div>
+</div>
+<div class="table-wrap" style="padding:16px; margin-bottom:16px; display:flex; gap:10px; flex-wrap:wrap;">
+    <a class="btn btn-outline" href="{{ url_for('reports.appointments_report') }}">Appointment Report</a>
+    <a class="btn btn-outline" href="{{ url_for('reports.consultations_report') }}">Consultation Report</a>
+    <a class="btn btn-outline" href="{{ url_for('reports.prescriptions_report') }}">Prescription Report</a>
+    <a class="btn btn-outline" href="{{ url_for('reports.doctor_performance_report') }}">Doctor Performance</a>
+    <a class="btn btn-outline" href="{{ url_for('reports.department_report') }}">Department-wise Report</a>
+    <a class="btn btn-outline" href="{{ url_for('reports.monthly_report') }}">Monthly Hospital Report</a>
+</div>
+<form class="search-bar" method="GET">
+    <input type="text" name="q" placeholder="Search by name, patient ID, or phone number..." value="{{ search }}">
+    <button class="btn btn-primary" type="submit">Search</button>
+</form>
+<div class="table-wrap">
+<table>
+    <tr><th>ID</th><th>Name</th><th>MRN</th><th>Gender</th><th>Contact</th><th>Export</th></tr>
+    {% for p in patients %}
+    <tr>
+        <td>{{ p.display_id }}</td>
+        <td>{{ p.full_name }}</td>
+        <td>{{ p.mrn or '—' }}</td>
+        <td>{{ p.gender }}</td>
+        <td>{{ p.contact_number }}</td>
+        <td>
+            <a class="btn btn-small btn-outline" href="{{ url_for('reports.export_excel', patient_id=p.id) }}">Excel</a>
+            <a class="btn btn-small btn-primary" href="{{ url_for('ehr.view_record', patient_id=p.id) }}">EHR</a>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">No patients found.</td></tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

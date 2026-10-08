@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — Milestone 2{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Integrated Patient Care Management System</h1>
+        <p class="subtitle">Milestone 2 — System Output</p>
+    </div>
+</div>
+
+<div class="stats-grid milestone-stats">
+    <div class="stat-card stat-blue">
+        <div class="value">{{ stats.total_patients }}</div>
+        <div class="label">Total Patients</div>
+    </div>
+    <div class="stat-card stat-green">
+        <div class="value">{{ stats.total_consultations }}</div>
+        <div class="label">Total Consultations</div>
+    </div>
+    <div class="stat-card stat-yellow">
+        <div class="value">{{ stats.total_prescriptions }}</div>
+        <div class="label">Total Prescriptions</div>
+    </div>
+    <div class="stat-card stat-purple">
+        <div class="value">{{ stats.total_lab_tests }}</div>
+        <div class="label">Laboratory Tests</div>
+    </div>
+    <div class="stat-card stat-red">
+        <div class="value">{{ stats.total_reports }}</div>
+        <div class="label">Reports Generated</div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <div class="card-header-row">
+            <h3>Recent Consultations</h3>
+            <a href="{{ url_for('consultation.list_consultations') }}">View All</a>
+        </div>
+        <table>
+            <tr><th>Date</th><th>Patient</th><th>Doctor</th><th>Diagnosis</th></tr>
+            {% for c in recent_consultations %}
+            <tr>
+                <td>{{ c.consultation_date.strftime('%d-%m-%Y') }}</td>
+                <td>{{ c.patient.full_name }}</td>
+                <td>Dr. {{ c.doctor.full_name }}</td>
+                <td>{{ c.diagnosis }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">No consultations yet.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-header-row">
+            <h3>Recent Prescriptions</h3>
+            <a href="{{ url_for('prescription.list_prescriptions') }}">View All</a>
+        </div>
+        <table>
+            <tr><th>Date</th><th>Patient</th><th>Medicine</th><th>Duration</th></tr>
+            {% for p in recent_prescriptions %}
+            <tr>
+                <td>{{ p.prescribed_date.strftime('%d-%m-%Y') }}</td>
+                <td>{{ p.patient.full_name }}</td>
+                <td>{{ p.medication_name }} {{ p.dosage }}</td>
+                <td>{{ p.duration or '—' }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">No prescriptions yet.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-header-row">
+            <h3>Recent Laboratory Reports</h3>
+            <a href="{{ url_for('lab.list_tests') }}">View All</a>
+        </div>
+        <table>
+            <tr><th>Date</th><th>Patient</th><th>Test</th><th>Result</th></tr>
+            {% for t in recent_lab_tests %}
+            <tr>
+                <td>{{ t.test_date.strftime('%d-%m-%Y') }}</td>
+                <td>{{ t.patient.full_name }}</td>
+                <td>{{ t.test_name }}</td>
+                <td>
+                    {% if t.result %}
+                    <span class="result-{{ t.result|lower|replace(' ', '-') }}">{{ t.result }}</span>
+                    {% else %}Pending{% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">No lab tests yet.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="dashboard-grid two-col">
+    <div class="card">
+        <h3>Patient Medical History Summary</h3>
+        {% if patients %}
+        <form method="get" action="{{ url_for('history.select_patient') }}" class="inline-form">
+            <select name="patient_id" onchange="this.form.submit()">
+                {% for p in patients %}
+                <option value="{{ p.id }}" {% if selected_patient and p.id == selected_patient.id %}selected{% endif %}>
+                    {{ p.full_name }} ({{ p.display_id }})
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+        {% if selected_patient %}
+        <div class="patient-mini-profile">
+            <p><strong>ID:</strong> {{ selected_patient.display_id }}</p>
+            <p><strong>Phone:</strong> {{ selected_patient.contact_number }}</p>
+            <p><strong>Age/Gender:</strong> {{ selected_patient.age }} / {{ selected_patient.gender }}</p>
+            <p><strong>Blood Group:</strong> {{ selected_patient.blood_group }}</p>
+        </div>
+        <a class="btn btn-small" href="{{ url_for('history.select_patient', patient_id=selected_patient.id) }}">View Full History</a>
+        {% endif %}
+        {% else %}
+        <p class="muted">No patients registered yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3>Reports &amp; Search</h3>
+        <p class="muted">Search patients by ID or name and generate medical reports.</p>
+        <a class="btn" href="{{ url_for('reports.search') }}">Open Reports &amp; Search</a>
+    </div>
+</div>
+
+<div class="card system-status">
+    <h3>System Status</h3>
+    <ul class="status-list">
+        {% for name, working in modules %}
+        <li><span class="status-ok">✓</span> {{ name }} — Working</li>
+        {% endfor %}
+    </ul>
+    <div class="milestone-banner">Milestone 2 Completed Successfully! All modules are working as expected.</div>
+</div>
+{% endblock %}

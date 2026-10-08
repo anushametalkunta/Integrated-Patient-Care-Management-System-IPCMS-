@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}EHR — {{ patient.full_name }}{% endblock %}
+{% block page_name %}EHR Record{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>📋 EHR Record — {{ patient.full_name }}</h1>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-outline btn-small" href="{{ url_for('ehr.list_records') }}">← Back to List</a>
+        {% if can_edit %}
+        <a class="btn btn-warning btn-small" href="{{ url_for('ehr.edit_record', patient_id=patient.id) }}">✏ Edit Record</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="ehr-cards-row">
+    <div class="card card-blue">
+        <h3>Patient Demographics</h3>
+        <div class="info-grid">
+            <div><div class="label">Patient ID</div><div class="value">{{ patient.display_id }}</div></div>
+            <div><div class="label">MRN</div><div class="value">{{ patient.mrn or '—' }}</div></div>
+            <div><div class="label">Full Name</div><div class="value">{{ patient.full_name }}</div></div>
+            <div><div class="label">Gender</div><div class="value">{{ patient.gender }}</div></div>
+            <div><div class="label">Blood Group</div><div class="value"><span class="badge badge-red">{{ patient.blood_group }}</span></div></div>
+            <div><div class="label">Contact No</div><div class="value">{{ patient.contact_number }}</div></div>
+            <div><div class="label">Email</div><div class="value">{{ patient.email or '—' }}</div></div>
+            <div><div class="label">Emergency Contact</div><div class="value">{{ patient.emergency_contact or '—' }}</div></div>
+        </div>
+    </div>
+    <div class="card card-green">
+        <h3>Measurements & Vitals</h3>
+        <div class="info-grid">
+            <div><div class="label">Date of Birth</div><div class="value">{{ patient.date_of_birth.strftime('%d %b %Y') if patient.date_of_birth else '—' }}</div></div>
+            <div><div class="label">Height</div><div class="value">{% if ehr and ehr.height_cm %}{{ ehr.height_cm }} cm{% else %}N/A{% endif %}</div></div>
+            <div><div class="label">Weight</div><div class="value">{% if ehr and ehr.weight_kg %}{{ ehr.weight_kg }} kg{% else %}N/A{% endif %}</div></div>
+            <div><div class="label">BMI</div><div class="value">
+                {% if ehr and ehr.bmi %}
+                    {{ ehr.bmi }}
+                    <span class="badge badge-red">{{ ehr.bmi_label|upper }}</span>
+                {% else %}N/A{% endif %}
+            </div></div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="section-title">📝 Medical Summary</div>
+    <p class="ehr-content">{{ ehr.medical_summary if ehr and ehr.medical_summary else 'No medical summary recorded yet.' }}</p>
+</div>
+
+<div class="card">
+    <div class="section-title">🩺 Diagnosis History</div>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Date</th><th>Diagnosis</th><th>Notes</th></tr>
+        {% for d in diagnoses %}
+        <tr>
+            <td>{{ d.diagnosis_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ d.diagnosis }}</td>
+            <td>{{ d.notes or '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="muted">No diagnosis history recorded.</td></tr>
+        {% endfor %}
+    </table>
+    </div>
+    {% if can_edit %}
+    <form method="POST" action="{{ url_for('ehr.add_diagnosis', patient_id=patient.id) }}" style="margin-top:1rem;">
+        {{ diagnosis_form.hidden_tag() }}
+        <div class="form-row">
+            <div class="form-group">{{ diagnosis_form.diagnosis_date.label }}{{ diagnosis_form.diagnosis_date() }}</div>
+            <div class="form-group">{{ diagnosis_form.diagnosis.label }}{{ diagnosis_form.diagnosis() }}</div>
+        </div>
+        <div class="form-group">{{ diagnosis_form.notes.label }}{{ diagnosis_form.notes() }}</div>
+        <button class="btn btn-small" type="submit">+ Add Diagnosis</button>
+    </form>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="section-title">⚠️ Allergies</div>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Allergy</th><th>Reaction</th></tr>
+        {% for a in allergies %}
+        <tr><td>{{ a.allergy_name }}</td><td>{{ a.reaction or '—' }}</td></tr>
+        {% else %}
+        {% if ehr and ehr.allergies %}
+        <tr><td colspan="2">{{ ehr.allergies }}</td></tr>
+        {% else %}
+        <tr><td colspan="2" class="muted">No known allergies recorded.</td></tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+    </div>
+    {% if can_edit %}
+    <form method="POST" action="{{ url_for('ehr.add_allergy', patient_id=patient.id) }}" style="margin-top:1rem;">
+        {{ allergy_form.hidden_tag() }}
+        <div class="form-row">
+            <div class="form-group">{{ allergy_form.allergy_name.label }}{{ allergy_form.allergy_name() }}</div>
+            <div class="form-group">{{ allergy_form.reaction.label }}{{ allergy_form.reaction() }}</div>
+        </div>
+        <button class="btn btn-small" type="submit">+ Add Allergy</button>
+    </form>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="section-title">💛 Chronic Diseases</div>
+    <p class="ehr-content">{{ ehr.chronic_diseases if ehr and ehr.chronic_diseases else 'No chronic diseases recorded.' }}</p>
+</div>
+
+<div class="card">
+    <div class="section-title">💊 Medications</div>
+    <p class="ehr-content">{{ ehr.medications if ehr and ehr.medications else 'No medications recorded.' }}</p>
+</div>
+
+{% if ehr %}
+<p class="ehr-timestamp">Last updated: {{ ehr.updated_at.strftime('%Y-%m-%d %H:%M') }}</p>
+{% endif %}
+{% endblock %}

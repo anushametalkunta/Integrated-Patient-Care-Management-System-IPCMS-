@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Appointments{% endblock %}
+{% block content %}
+<h1>Appointments</h1>
+<a class="btn" href="{{ url_for('appointment.book_appointment') }}">➕ Book Appointment</a>
+
+<table style="margin-top:1rem;">
+    <tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th></tr>
+    {% for a in appointments %}
+    <tr>
+        <td>{{ a.patient.full_name }}</td>
+        <td>Dr. {{ a.doctor.full_name }}</td>
+        <td>{{ a.appointment_date }}</td>
+        <td>{{ a.appointment_time }}</td>
+        <td><span class="badge badge-{{ a.status|lower }}">{{ a.status }}</span></td>
+        <td>
+            {% if a.status == 'Scheduled' %}
+            <form method="POST" action="{{ url_for('appointment.cancel_appointment', appointment_id=a.id) }}" style="display:inline;" onsubmit="return confirm('Cancel this appointment?');">
+                <button class="btn btn-danger btn-small" type="submit">Cancel</button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">No appointments found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}
