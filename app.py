@@ -11,8 +11,8 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     if not os.environ.get('VERCEL'):
-    os.makedirs(os.path.join(app.root_path, 'instance'), exist_ok=True)
-
+       os.makedirs(os.path.join(app.root_path, 'instance'), exist_ok=True)
+    
     db.init_app(app)
     login_manager.init_app(app)
 
